@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>İyi ki Doğdun</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#fbf3ee;
+    --blush:#f3ddd8;
+    --rose:#c17b83;
+    --rose-deep:#9c4f5c;
+    --plum:#4a2b34;
+    --gold:#c99b5a;
+    --paper:#fffaf4;
+  }
+
+  *{box-sizing:border-box;}
+
+  html,body{
+    margin:0;
+    padding:0;
+    min-height:100%;
+    background:
+      radial-gradient(circle at 20% 15%, #f8e4dd 0%, transparent 45%),
+      radial-gradient(circle at 85% 80%, #f1d6d0 0%, transparent 40%),
+      linear-gradient(160deg, var(--cream) 0%, var(--blush) 100%);
+    font-family:'Cormorant Garamond', serif;
+    color:var(--plum);
+    overflow-x:hidden;
+  }
+
+  .stage{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:6vh 6vw;
+    position:relative;
+  }
+
+  /* subtle floating petals, one orchestrated ambient layer */
+  .petal{
+    position:fixed;
+    top:-10vh;
+    width:14px;
+    height:14px;
+    background:var(--rose);
+    opacity:.35;
+    border-radius:0 60% 0 60%;
+    animation:fall linear infinite;
+    pointer-events:none;
+    z-index:0;
+  }
+  @keyframes fall{
+    to{ transform: translateY(115vh) rotate(200deg); }
+  }
+
+  .eyebrow-date{
+    font-family:'Dancing Script', cursive;
+    font-size:clamp(1.3rem, 2vw, 1.7rem);
+    color:var(--rose-deep);
+    margin:0 0 0.2em 0;
+    z-index:1;
+  }
+
+  h1.title{
+    font-family:'Playfair Display', serif;
+    font-weight:600;
+    font-style:italic;
+    font-size:clamp(2.3rem, 6vw, 4rem);
+    text-align:center;
+    margin:0 0 0.15em 0;
+    color:var(--rose-deep);
+    line-height:1.05;
+    z-index:1;
+  }
+
+  p.sub{
+    max-width:34ch;
+    text-align:center;
+    font-size:clamp(1.05rem,2vw,1.3rem);
+    color:var(--plum);
+    opacity:.85;
+    margin:0 0 5vh 0;
+    line-height:1.5;
+    z-index:1;
+  }
+
+  /* ENVELOPE */
+  .envelope-wrap{
+    position:relative;
+    width:min(340px, 78vw);
+    aspect-ratio:3/2;
+    cursor:pointer;
+    z-index:1;
+    perspective:1400px;
+  }
+
+  .envelope-wrap:focus-visible{
+    outline:3px solid var(--rose-deep);
+    outline-offset:6px;
+    border-radius:10px;
+  }
+
+  .env-shadow{
+    position:absolute;
+    left:6%;
+    right:6%;
+    bottom:-14px;
+    height:22px;
+    background:radial-gradient(ellipse at center, rgba(74,43,52,.28) 0%, transparent 75%);
+    filter:blur(2px);
+    transition:opacity .5s ease;
+  }
+
+  .envelope{
+    position:absolute;
+    inset:0;
+    border-radius:6px;
+    background:linear-gradient(180deg, #f6e2da, #eecdc4);
+    box-shadow:
+      0 18px 30px -12px rgba(156,79,92,.45),
+      inset 0 0 0 1px rgba(156,79,92,.15);
+    transition: transform .5s cubic-bezier(.4,0,.2,1);
+  }
+
+  .envelope-wrap:hover .envelope,
+  .envelope-wrap:focus-visible .envelope{
+    transform: translateY(-4px);
+  }
+
+  .env-body{
+    position:absolute;
+    inset:0;
+    border-radius:6px;
+    overflow:hidden;
+  }
+
+  .env-body::before, .env-body::after{
+    content:"";
+    position:absolute;
+    top:0;
+    width:0;
+    height:0;
+    border-style:solid;
+  }
+  /* bottom fold lines suggestion via pseudo triangles behind flap */
+  .fold-left{
+    position:absolute;
+    left:0; bottom:0;
+    width:0; height:0;
+    border-style:solid;
+    border-width:0 0 100% 50%;
+    border-color:transparent transparent rgba(156,79,92,.10) transparent;
+  }
+  .fold-right{
+    position:absolute;
+    right:0; bottom:0;
+    width:0; height:0;
+    border-style:solid;
+    border-width:100% 50% 0 0;
+    border-color:transparent transparent transparent rgba(156,79,92,.10);
+  }
+
+  .wax{
+    position:absolute;
+    left:50%; top:38%;
+    width:46px; height:46px;
+    transform:translate(-50%,-50%);
+    background:radial-gradient(circle at 35% 30%, #d98a94, var(--rose-deep) 70%);
+    border-radius:50%;
+    box-shadow:0 3px 8px rgba(156,79,92,.5), inset 0 0 0 2px rgba(255,255,255,.15);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Dancing Script',cursive;
+    color:#fbe4e6;
+    font-size:1.3rem;
+    z-index:3;
+    transition: opacity .35s ease, transform .35s ease;
+  }
+
+  .flap{
+    position:absolute;
+    left:0; right:0; top:0;
+    height:56%;
+    background:linear-gradient(160deg, #eecdc4, #e3b8ae);
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    transform-origin: top center;
+    transition: transform .6s cubic-bezier(.65,0,.35,1);
+    z-index:2;
+    box-shadow: inset 0 -6px 10px -6px rgba(156,79,92,.25);
+  }
+
+  .letter-peek{
+    position:absolute;
+    left:8%; right:8%;
+    bottom:10%;
+    top:22%;
+    background:var(--paper);
+    border-radius:3px;
+    box-shadow:0 -2px 10px rgba(156,79,92,.15);
+    transform: translateY(70%);
+    transition: transform .6s cubic-bezier(.34,1.3,.64,1) .05s;
+    z-index:1;
+  }
+
+  .hint{
+    margin-top:22px;
+    text-align:center;
+    font-size:1rem;
+    color:var(--rose-deep);
+    opacity:.75;
+    letter-spacing:.02em;
+    z-index:1;
+  }
+
+  .photo-frame{
+    position:absolute;
+    top:-46px;
+    right:-56px;
+    width:150px;
+    height:150px;
+    border-radius:50%;
+    padding:6px;
+    background:var(--paper);
+    box-shadow:0 12px 26px -8px rgba(74,43,52,.5), 0 0 0 1px rgba(193,123,131,.25);
+    transform:rotate(8deg);
+    z-index:4;
+  }
+  .photo-frame img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    border-radius:50%;
+    display:block;
+  }
+  @media (max-width: 440px){
+    .photo-frame{
+      width:104px; height:104px;
+      top:-30px; right:-22px;
+    }
+  }
+
+  .music-btn{
+    position:fixed;
+    bottom:22px;
+    right:22px;
+    z-index:5;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:var(--paper);
+    border:1px solid rgba(193,123,131,.3);
+    border-radius:999px;
+    padding:10px 18px 10px 14px;
+    box-shadow:0 10px 24px -10px rgba(74,43,52,.4);
+    cursor:pointer;
+    font-family:'Cormorant Garamond', serif;
+    font-size:1rem;
+    color:var(--rose-deep);
+  }
+  .music-btn .note{
+    font-size:1.15rem;
+    display:inline-block;
+  }
+  .music-btn.playing .note{
+    animation: bob 1s ease-in-out infinite;
+  }
+  @keyframes bob{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(-3px); }
+  }
+  @media (max-width:440px){
+    .music-btn{ bottom:14px; right:14px; padding:8px 14px 8px 12px; font-size:.9rem; }
+  }
+
+  .envelope-wrap.opened .flap{
+    transform: rotateX(180deg);
+  }
+  .envelope-wrap.opened .wax{
+    opacity:0;
+    transform:translate(-50%,-50%) scale(.6);
+  }
+  .envelope-wrap.opened .letter-peek{
+    transform: translateY(4%);
+  }
+  .envelope-wrap.opened .env-shadow{
+    opacity:.4;
+  }
+
+  /* ===== Letter overlay ===== */
+  .overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(74,43,52,.55);
+    backdrop-filter:blur(3px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:4vh 4vw;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .45s ease;
+    z-index:10;
+  }
+  .overlay.show{
+    opacity:1;
+    pointer-events:auto;
+  }
+
+  .paper{
+    position:relative;
+    max-width:620px;
+    width:100%;
+    max-height:86vh;
+    overflow-y:auto;
+    background:var(--paper);
+    background-image:
+      repeating-linear-gradient(transparent, transparent 38px, rgba(156,79,92,.07) 39px);
+    border-radius:4px;
+    padding:clamp(2rem,5vw,3.4rem) clamp(1.6rem,5vw,3.2rem);
+    box-shadow:0 30px 60px -20px rgba(0,0,0,.4);
+    transform: translateY(24px) scale(.97);
+    opacity:0;
+    transition: transform .5s cubic-bezier(.2,.8,.3,1.15), opacity .4s ease;
+  }
+  .overlay.show .paper{
+    transform: translateY(0) scale(1);
+    opacity:1;
+    transition-delay:.08s;
+  }
+
+  .paper::before{
+    content:"";
+    position:absolute;
+    top:0; bottom:0; left:56px;
+    width:1px;
+    background:rgba(193,123,131,.25);
+    display:none;
+  }
+
+  .close-btn{
+    position:sticky;
+    top:0;
+    float:right;
+    background:none;
+    border:none;
+    font-family:'Cormorant Garamond',serif;
+    font-size:1.6rem;
+    color:var(--rose-deep);
+    cursor:pointer;
+    line-height:1;
+    padding:.2em .3em;
+    z-index:2;
+  }
+  .close-btn:hover{ color:var(--plum); }
+
+  .letter-heading{
+    font-family:'Dancing Script', cursive;
+    font-size:clamp(1.8rem,4vw,2.4rem);
+    color:var(--rose-deep);
+    margin:0 0 .6em 0;
+    text-align:left;
+  }
+
+  .letter-body p{
+    font-size:clamp(1.05rem,2vw,1.22rem);
+    line-height:1.75;
+    margin:0 0 1.15em 0;
+    text-align:left;
+    color:var(--plum);
+  }
+
+  .signoff{
+    font-family:'Dancing Script', cursive;
+    font-size:1.6rem;
+    color:var(--rose-deep);
+    margin-top:.4em;
+  }
+
+  footer.credit{
+    margin-top:6vh;
+    font-size:.85rem;
+    color:var(--rose-deep);
+    opacity:.55;
+    z-index:1;
+    text-align:center;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .petal{ animation:none; display:none; }
+    .flap, .letter-peek, .envelope, .paper{ transition:none; }
+  }
+
+  /* FIREWORKS (animated via JS Web Animations API, not CSS keyframes) */
+  .firework-rocket{
+    position:fixed;
+    width:5px;
+    height:5px;
+    border-radius:50%;
+    pointer-events:none;
+    z-index:9999;
+  }
+  .firework-particle{
+    position:fixed;
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    pointer-events:none;
+    z-index:9999;
+  }
+</style>
+</head>
+<body>
+
+<div class="stage" id="stage">
+  <p class="eyebrow-date">Yağmur'uma</p>
+  <h1 class="title">İyi ki Doğdun Sevgilim</h1>
+  <p class="sub">Sana yazdığım bir mektup var. Zarfa dokun, içindekini oku.</p>
+
+  <div class="envelope-wrap" id="envelope" tabindex="0" role="button" aria-label="Mektubu aç">
+    <div class="env-shadow"></div>
+    <div class="envelope">
+      <div class="env-body">
+        <div class="fold-left"></div>
+        <div class="fold-right"></div>
+      </div>
+    </div>
+    <div class="letter-peek"></div>
+    <div class="flap"></div>
+    <div class="wax">Y</div>
+    <div class="photo-frame"><img src="yagmur.jpg" alt="Yağmur"></div>
+  </div>
+
+  <p class="hint">zarfa tıkla</p>
+
+  <button class="music-btn" id="musicBtn" aria-label="Müziği çal">
+    <span class="note">♪</span>
+    <span id="musicLabel">şarkıyı çal</span>
+  </button>
+
+  <audio id="bgMusic" src="dogum-gunu.mp3" preload="auto" loop></audio>
+
+  <footer class="credit">senin için, sevgiyle</footer>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="paper" id="paper">
+    <button class="close-btn" id="closeBtn" aria-label="Mektubu kapat">✕ kapat</button>
+    <h2 class="letter-heading">Yağmur'um, Hayattaki En Büyük Şansım,</h2>
+    <div class="letter-body">
+      <p>Bugün dünyadaki en güzel, en tatlı ve beni dünyanın en şanslı insanı yapan kişinin doğum günü. İyi ki doğdun, iyi ki hayatımın en kıymetli köşesine, kalbimin tam ortasına geldin.</p>
+      <p>Seninle tanıştığım o ana kadar hayatım sıradan bir şekilde gittiğini düşünürdüm. Oysa sen hayatıma girdiğin andan itibaren her şey renk değiştirdi, sesler daha güzel çıkmaya, hayat çok daha anlamlı olmaya başladı. Seninle geçen her gün dünyam o kadar parlak ki sanki senden önce hiç yaşamamış gibiyim. Bazen sadece yüzüne dalıp gidiyorum ve içimden kocaman bir "iyi ki" geçiriyorum; iyi ki yollarımız kesişmiş, iyi ki bu hayatta aynı masayı, aynı hayalleri paylaşıyoruz.</p>
+      <p>Seninle olmak, hayatın koşturmacası içinde fırtınalı günlerden sonra sığınılabilecek en güvenli, en sakin liman gibi. Gülüşün en yorgun anlarımda bile bütün omzumdaki yükü alıp götürüyor. Hayatı sadece yaşamak değil, seninle birlikte anlamlandırmak, en sıradan anları bile unutulmaz bir hatıraya dönüştürmek o kadar özel ki. Birlikte aldığımız her nefes, paylaştığımız o küçük kahkahalar, en zorlu anlarda bile birbirimize sımsıkı tutunup omuz omuza göğüslediğimiz her mücadele benim bu hayattaki en büyük hazinem. Seninle beraber yaşlanma fikri bile içimi öyle bir huzurla dolduruyor ki, saçlarımız beyazlasa, yıllar geçip gitse bile senin elini tutuyor olacağımı bilmek bana her şeye karşı koyma gücü veriyor.</p>
+      <p>Seninle beraber yaşlanmak, sadece günlerin eskimesi değil, hayatı en derin, en saf haliyle birlikte öğrenmek demek. Gözlerindeki o parıltı, bana her gün yeniden şükretme sebebi veriyor. Sadece bugün değil, ömrümün yettiği her gün, hayatın boyunca yüzünden o neşe hiç eksik olmasın, kalbin her zaman böyle sevgiyle ve umutla çarpsın istiyorum.</p>
+      <p>Geleceğe dair kurduğum bütün güzel hayallerin başrolünde sensin. Birlikte kurduğumuz hayaller, kuracağımız o güzel yuva, hayata geçireceğimiz tüm planlar ayrı bir heyecan veriyor. Biliyorum ki hayatın karşımıza çıkardığı her ne olursa olsun, ellerimiz birbirine kenetliyken üstesinden gelemeyeceğimiz, birlikte göğüsleyemeyeceğimiz hiçbir şey yok. Sen benim sadece sevgilim değil, en yakın arkadaşım, sırdaşım, bu hayattaki en büyük yoldaşımsın.</p>
+      <p>İyi ki benim hayatımdasın, iyi ki kalbimin en derin yerindesin, iyi ki varsın sevgilim. Yeni yaşın sana beklediğinden çok daha büyük mutluluklar, huzur ve kalbindeki bütün güzel duaların gerçek olacağı anlar getirsin. Seni canımdan çok seviyorum, doğum günün kutlu olsun.</p>
+      <p class="signoff">Berhan</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ambient petals
+  const stage = document.getElementById('stage');
+  const colors = ['#c17b83','#e3b8ae','#c99b5a'];
+  for(let i=0;i<14;i++){
+    const p = document.createElement('div');
+    p.className='petal';
+    p.style.left = Math.random()*100+'vw';
+    p.style.background = colors[i%colors.length];
+    p.style.animationDuration = (9+Math.random()*8)+'s';
+    p.style.animationDelay = (Math.random()*10)+'s';
+    p.style.opacity = 0.2 + Math.random()*0.25;
+    document.body.appendChild(p);
+  }
+
+  const envelope = document.getElementById('envelope');
+  const overlay = document.getElementById('overlay');
+  const closeBtn = document.getElementById('closeBtn');
+  const paper = document.getElementById('paper');
+
+  function openLetter(){
+    envelope.classList.add('opened');
+    setTimeout(()=>{
+      overlay.classList.add('show');
+    }, 420);
+  }
+  function closeLetter(){
+    overlay.classList.remove('show');
+    envelope.classList.remove('opened');
+  }
+
+  envelope.addEventListener('click', openLetter);
+  envelope.addEventListener('keydown', (e)=>{
+    if(e.key==='Enter' || e.key===' '){
+      e.preventDefault();
+      openLetter();
+    }
+  });
+  closeBtn.addEventListener('click', closeLetter);
+  overlay.addEventListener('click', (e)=>{
+    if(e.target === overlay) closeLetter();
+  });
+  document.addEventListener('keydown', (e)=>{
+    if(e.key==='Escape') closeLetter();
+  });
+
+  // ---- havai fişek ----
+  const fireworkColors = ['#ff6b81','#ffd166','#c99b5a','#ff9ecb','#a3e8d0','#ffffff','#ff8a5c'];
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function burstAt(xPx, yPx, color){
+    const particleCount = 30;
+    for(let i=0;i<particleCount;i++){
+      const angle = (Math.PI*2*i/particleCount) + (Math.random()*0.4 - 0.2);
+      const distance = 60 + Math.random()*100;
+      const dx = Math.cos(angle)*distance;
+      const dy = Math.sin(angle)*distance + 35;
+      const dur = 800 + Math.random()*500;
+
+      const p = document.createElement('div');
+      p.className = 'firework-particle';
+      p.style.left = xPx + 'px';
+      p.style.top = yPx + 'px';
+      p.style.background = color;
+      p.style.boxShadow = `0 0 6px 2px ${color}`;
+      document.body.appendChild(p);
+
+      const anim = p.animate([
+        { transform: 'translate(0px, 0px) scale(1)', opacity: 1 },
+        { transform: `translate(${dx}px, ${dy}px) scale(.3)`, opacity: 0 }
+      ], { duration: dur, easing: 'cubic-bezier(.15,.6,.4,1)', fill: 'forwards' });
+
+      anim.onfinish = () => p.remove();
+    }
+  }
+
+  function launchFirework(xVw){
+    const color = fireworkColors[Math.floor(Math.random()*fireworkColors.length)];
+    const vh = window.innerHeight;
+    const startX = (xVw/100) * window.innerWidth;
+    const startY = vh;
+    const rise = vh * (0.4 + Math.random()*0.3);
+    const endY = startY - rise;
+    const dur = 500 + rise*0.9;
+
+    const rocket = document.createElement('div');
+    rocket.className = 'firework-rocket';
+    rocket.style.left = startX + 'px';
+    rocket.style.top = startY + 'px';
+    rocket.style.background = color;
+    rocket.style.boxShadow = `0 0 6px 2px ${color}`;
+    document.body.appendChild(rocket);
+
+    const anim = rocket.animate([
+      { transform: 'translateY(0px)', opacity: 1 },
+      { transform: `translateY(-${rise}px)`, opacity: 1 }
+    ], { duration: dur, easing: 'cubic-bezier(.25,.46,.45,.94)', fill: 'forwards' });
+
+    anim.onfinish = () => {
+      rocket.remove();
+      burstAt(startX, endY, color);
+    };
+  }
+
+  function launchFireworksShow(count = 6){
+    if(reduceMotion) return;
+    for(let i=0;i<count;i++){
+      setTimeout(()=>{
+        launchFirework(15 + Math.random()*70);
+      }, i*260 + Math.random()*180);
+    }
+  }
+
+  // ---- müzik ----
+  const musicBtn = document.getElementById('musicBtn');
+  const musicLabel = document.getElementById('musicLabel');
+  const bgMusic = document.getElementById('bgMusic');
+
+  musicBtn.addEventListener('click', ()=>{
+    if(bgMusic.paused){
+      launchFireworksShow();
+      bgMusic.play().then(()=>{
+        musicBtn.classList.add('playing');
+        musicLabel.textContent = 'şarkıyı durdur';
+      }).catch(()=>{
+        musicLabel.textContent = 'çalınamadı, tekrar dene';
+      });
+    } else {
+      bgMusic.pause();
+      musicBtn.classList.remove('playing');
+      musicLabel.textContent = 'şarkıyı çal';
+    }
+  });
+</script>
+
+</body>
+</html>
